@@ -1,5 +1,10 @@
 import "./App.css";
 import { useDispatch, useSelector } from "react-redux";
+import {
+  addCustomer,
+  removeCustomer,
+} from "./redux/actionCreators/customersActionCreators.js";
+import { fetchCustomers } from "./redux/asyncAction/customers.js";
 
 function App() {
   const dispatch = useDispatch();
@@ -13,27 +18,35 @@ function App() {
   const getCash = (cash) => {
     dispatch({ type: "GET_CASH", payload: cash });
   };
-  const addCustomer = (name) => {
+  const handleAddCustomer = (name) => {
     const customer = {
       name,
       id: Date.now(),
     };
-    dispatch({ type: "ADD_CUSTOMER", payload: customer });
+    dispatch(addCustomer(customer));
   };
-  const removeCustomer = (customer) => {
-    console.log(customer.id);
-    dispatch({ type: "REMOVE_CUSTOMER", payload: customer.id });
+  const handleRemoveCustomer = (customer) => {
+    dispatch(removeCustomer(customer.id));
   };
   return (
     <div className="App">
       <h1>{cash}</h1>
       <button onClick={() => addCash(50)}>Пополнить</button>
       <button onClick={() => getCash(5)}>Снять</button>
-      <button onClick={() => addCustomer(prompt())}>Добавить клиента</button>
+      <button onClick={() => handleAddCustomer(prompt())}>
+        Добавить клиента
+      </button>
+      <button onClick={() => dispatch(fetchCustomers())}>
+        Получить всех клиентов из базы
+      </button>
+
       {customers.length ? (
         <div>
           {customers.map((customer, index) => (
-            <div key={customer.id} onClick={() => removeCustomer(customer)}>
+            <div
+              key={customer.id}
+              onClick={() => handleRemoveCustomer(customer)}
+            >
               {customer.name}
             </div>
           ))}
